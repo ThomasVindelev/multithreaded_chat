@@ -12,6 +12,8 @@ public class Client {
     private int port = 5000;
     private String ip;
     private DataOutputStream dataOutputStream;
+    private String tempName;
+    private String realName = "";
 
     public Client() {
 
@@ -36,10 +38,16 @@ public class Client {
 
             Thread sendMsg = new Thread(() -> {
                 String msg = "";
-                while(!msg.equals("quit")){
+                while(!msg.equals("QUIT")){
                     msg = scanner.nextLine();
+                    tempName = msg;
                     try {
-                        dataOutputStream.writeUTF(msg);
+                        if(!realName.equals("")) {
+                            dataOutputStream.writeUTF("DATA " + realName + ": " + msg);
+                        } else {
+                            dataOutputStream.writeUTF(msg);
+                        }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -50,11 +58,11 @@ public class Client {
                 while(true) {
                     try {
                         try {
-                            dataOutputStream.writeUTF("heartBeat");
+                            dataOutputStream.writeUTF("IMAV");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        Thread.sleep(1);
+                        Thread.sleep(3000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -63,8 +71,14 @@ public class Client {
 
             Thread recieveMsg = new Thread(() -> {
                 String msg = "";
-                while (!msg.equals("quit")) {
-                    if(msg.equals("Welcome")) {
+                while (!msg.equals("QUIT")) {
+                    if(msg.equals("J_OK")) {
+                        realName = tempName;
+                        try {
+                            dataOutputStream.writeUTF("JOIN "+realName+", "+ip+":"+port);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         heartBeat.start();
                     }
                     try {

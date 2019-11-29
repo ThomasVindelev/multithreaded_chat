@@ -5,7 +5,6 @@ import com.company.Client.Client;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -18,9 +17,9 @@ public class Server {
 
     public void acceptClient() {
         try {
-            System.out.println("Waiting for client...");
             server = new ServerSocket(5000);
             while (true) {
+                System.out.println("Waiting for client...");
                 Socket socket = server.accept();
                 DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
