@@ -6,6 +6,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ClientHandler implements Runnable {
@@ -57,7 +58,12 @@ public class ClientHandler implements Runnable {
             }
             dataOutputStream.writeUTF("J_OK");
             System.out.println("Adding " + username + " to users");
-
+            StringBuilder listOfUsers = new StringBuilder("LIST << ");
+            for (Client client: Server.getClients()) {
+                listOfUsers.append(client.getUsername()).append(" ");
+            }
+            listOfUsers.append(">>");
+            dataOutputStream.writeUTF(listOfUsers.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,8 +98,7 @@ public class ClientHandler implements Runnable {
         while (!closeConnection) {
             try {
                 recievedMessage = dataInputStream.readUTF();
-                if(recievedMessage.equals("QUIT")) {
-                    System.out.println("IYHSAGIOUASGHOUJBGAHSAS");
+                if(recievedMessage.equals("DATA "+ username + ": QUIT")) {
                     newClient.getDataOutputStream().writeUTF("QUIT");
                     closeConnection = true;
                     Server.getClients().remove(newClient);
@@ -112,7 +117,6 @@ public class ClientHandler implements Runnable {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("hehexDD");
                 closeConnection = true;
             }
         }

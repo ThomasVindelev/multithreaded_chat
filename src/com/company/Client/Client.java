@@ -88,6 +88,7 @@ public class Client {
                         e.printStackTrace();
                     }
                 }
+                System.exit(0);
             });
             sendMsg.start();
             recieveMsg.start();
